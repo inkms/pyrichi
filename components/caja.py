@@ -6,7 +6,7 @@
 
 # Here goes the class
 class Caja():
-    """TO DO: rellenar descripcion
+    """Este modulo implementa una caja de registro.
     """
     # Variables estaticas de la clase
     contador = 0  # Contador para que todas las cajas tengan ids diferentes
