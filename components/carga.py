@@ -12,6 +12,8 @@ class Carga():
     def __init__(self, nombre, potencia = None):
         self.nombre = nombre
         self.potencia = potencia
+        if potencia is not None and potencia <= 0:
+            self.potencia = None
 
 
     def get_nombre(self):
@@ -35,10 +37,11 @@ class Carga():
     def set_potencia(self, potencia):
         """Asigna una (nueva) potencia a la carga
         """
-        self.potencia = potencia
+        if potencia > 0:
+            self.potencia = potencia
 
 
-    def completamente_definido(self):
+    def completamente_definida(self):
         """Retorna True si la carga tiene potencia asignada
         """
         return bool(self.potencia is not None)

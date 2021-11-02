@@ -3,6 +3,7 @@
 import unittest
 
 from components.caja import Caja
+from components.carga import Carga
 
 class TestCaja(unittest.TestCase):
     """Unit tests para la clase caja
@@ -14,7 +15,7 @@ class TestCaja(unittest.TestCase):
         al constructor
         """
         caja1 = Caja()
-        self.assertEqual(caja1.get_identidad(), 0)
+        self.assertNotEqual(caja1.get_identidad(), None)
 
 
     def test_dos_cajas_tienen_ids_distintos(self):
@@ -106,6 +107,108 @@ class TestCaja(unittest.TestCase):
         self.assertEqual(len(caja1.get_hijas()), 1)
         self.assertEqual(caja1.get_hijas(), [caja2])
         self.assertEqual(caja2.get_hijas(), [caja3])
+
+
+    def test_anadir_carga(self):
+        """
+        Crear una caja, añadir carga y comprobar que funciona
+        """
+        caja1 = Caja()
+        carga1 = Carga("Uno")
+        caja1.add_carga(carga1)
+        self.assertEqual(caja1.get_cargas(), [carga1])
+
+
+    def test_anadir_multiples_cargas(self):
+        """
+        Crear una caja, añadir 2 cargas y comprobar que funciona
+        """
+        caja1 = Caja()
+        carga1 = Carga("Uno")
+        carga2 = Carga("Dos")
+        caja1.add_carga(carga1)
+        caja1.add_carga(carga2)
+        self.assertEqual(caja1.get_cargas(), [carga1,carga2])
+
+
+    def test_borrar_carga(self):
+        """
+        Crear una caja, añadir carga, borrarla y comprobar que funciona
+        """
+        caja1 = Caja()
+        carga1 = Carga("Uno")
+        caja1.add_carga(carga1)
+        caja1.delete_carga(carga1)
+        self.assertEqual(caja1.get_cargas(), [])
+
+
+    def test_borrar_solo_carga_elegida(self):
+        """
+        Crear una caja, añadir 2 cargas, borrar una y comprobar que funciona
+        """
+        caja1 = Caja()
+        carga1 = Carga("Uno")
+        carga2 = Carga("Dos")
+        caja1.add_carga(carga1)
+        caja1.add_carga(carga2)
+        caja1.delete_carga(carga2)
+        self.assertEqual(caja1.get_cargas(), [carga1])
+
+
+    def test_caja_con_cargas_definidas(self):
+        """
+        Crear una caja, añadir 2 cargas definidas, comprobar que la caja esta definida
+        """
+        caja1 = Caja()
+        carga1 = Carga("Uno",100)
+        carga2 = Carga("Dos",200)
+        caja1.add_carga(carga1)
+        caja1.add_carga(carga2)
+        self.assertEqual(caja1.completamente_definida(), True)
+
+
+    def test_caja_con_cargas_indefinidas(self):
+        """
+        Crear una caja, añadir 2 cargas, una indefinida, comprobar que la caja esta indefinida
+        """
+        caja1 = Caja()
+        carga1 = Carga("Uno",100)
+        carga2 = Carga("Dos")
+        caja1.add_carga(carga1)
+        caja1.add_carga(carga2)
+        self.assertEqual(caja1.completamente_definida(), False)
+
+
+    def test_caja_con_cajas_definidas(self):
+        """
+        Crear una caja, añadir 2 cajas definidas, comprobar que la caja esta definida
+        """
+        caja0 = Caja()
+        caja1 = Caja()
+        caja2 = Caja()
+        carga1 = Carga("Uno",100)
+        carga2 = Carga("Dos",200)
+        caja1.add_carga(carga1)
+        caja2.add_carga(carga2)
+        caja1.set_matriz(caja0)
+        caja2.set_matriz(caja0)
+        self.assertEqual(caja0.completamente_definida(), True)
+
+
+    def test_caja_con_cajas_indefinidas(self):
+        """
+        Crear una caja, añadir 2 cajas, una indefinida, comprobar que la caja esta indefinida
+        """
+        caja0 = Caja()
+        caja1 = Caja()
+        caja2 = Caja()
+        carga1 = Carga("Uno",100)
+        carga2 = Carga("Dos")
+        caja1.add_carga(carga1)
+        caja2.add_carga(carga2)
+        caja1.set_matriz(caja0)
+        caja2.set_matriz(caja0)
+        self.assertEqual(caja0.completamente_definida(), False)
 
 
 if __name__ == '__main__':

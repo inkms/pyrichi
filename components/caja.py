@@ -47,6 +47,18 @@ class Caja():
         self.hijas.remove(hija)
 
 
+    def add_carga(self, carga):
+        """Método que añade carga a las cargas de esta caja
+        """
+        self.cargas.append(carga)
+
+
+    def delete_carga(self, carga):
+        """Método que borra carga a las cargas de esta caja
+        """
+        self.cargas.remove(carga)
+
+
     def _detect_and_prevent_loop(self, caja_buscada):
         """Comprueba que no hay bucles, si los hay, los rompe
         """
@@ -73,3 +85,21 @@ class Caja():
         """Retorna un vector de referencias a las cajas hijas
         """
         return self.hijas
+
+
+    def get_cargas(self):
+        """Retorna un vector de referencias a las cargas
+        """
+        return self.cargas
+
+
+    def completamente_definida(self):
+        """Retorna True si todas sus cargas y cajas hijas estan definidas
+        """
+        for carga in self.cargas:
+            if not carga.completamente_definida():
+                return False
+        for hija in self.hijas:
+            if not hija.completamente_definida():
+                return False
+        return True
