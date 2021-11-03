@@ -13,7 +13,7 @@ class Caja():
     def __init__(self, caja_matriz = None):
         self.cargas = []
         self.hijas = []
-        self.matriz = caja_matriz
+        self.matriz = None
         self.identidad = Caja.contador
         Caja.contador += 1
         if caja_matriz is not None:

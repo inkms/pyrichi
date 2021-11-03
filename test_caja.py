@@ -18,6 +18,16 @@ class TestCaja(unittest.TestCase):
         self.assertNotEqual(caja1.get_identidad(), None)
 
 
+    def test_crear_caja_con_matriz(self):
+        """
+        Crear una caja sin mas sin darle parametros extra
+        al constructor
+        """
+        caja1 = Caja()
+        caja2 = Caja(caja1)
+        self.assertEqual(caja2.get_matriz(), caja1)
+
+
     def test_dos_cajas_tienen_ids_distintos(self):
         """
         Crear 2 cajas y comprobar que tienen ids distintos
