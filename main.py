@@ -11,13 +11,12 @@ class CajaGUI(QPushButton):
         super().__init__()
         self.setAutoFillBackground(True)
         self.caja = caja
-        caja._set_gui(self)
         self.setText(str(caja.get_identidad()))
 
 
     def render_con_hijas(self, layout, fila_inicial, columna_inicial):
         layout.addWidget(self, fila_inicial, columna_inicial)
-        print("Adding caja {} en la fila {} y columna {}", self.caja.get_identidad(), fila_inicial, columna_inicial)
+        print("Adding caja {} en la fila {} y columna {}".format(self.caja.get_identidad(), fila_inicial, columna_inicial))
         columna = columna_inicial + 1
         fila = fila_inicial
         for hija in self.caja.get_hijas():
@@ -52,15 +51,7 @@ class MainWindow(QMainWindow):
     def render_cajas(self):
         """Distribuye las cajas partiendo de la caja de acometida
         """
-        columna = 0
-        fila = 0
         self.acometida.render_con_hijas(self.layout,0,0)
-        # self.layout.addWidget(CajaGUI(self.acometida), fila, columna)
-        # print("Adding caja {} en la fila {} y columna {}", self.acometida.get_identidad(), fila, columna)
-        # columna += 1
-        # for hija in self.acometida.get_hijas():
-        #     nueva_caja_gui = CajaGUI(hija)
-        #     fila = nueva_caja_gui.render_con_hijas(self.layout,fila,columna)
 
 
 app = QApplication(sys.argv)
