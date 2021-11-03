@@ -42,12 +42,12 @@ class BoxGUI(QPushButton):
     def processClickAddMode(self):
         print("Add mode click")
         Box(self.box)
-        self.window().render_boxes()
+        self.window().redraw_boxes()
 
     def processClickDeleteMode(self):
         print("Delete mode click")
         self.box.set_parent(None)
-        self.window().render_boxes()
+        self.window().redraw_boxes()
 
     def processClickDefaultMode(self):
         print("Default mode click")
@@ -60,11 +60,10 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Pyrichi")
 
-        entrance = Box()
-        self.entrance = BoxGUI(entrance)
+        self.entrance = Box()
         self.layout = QGridLayout()
 
-        self.render_boxes()
+        self.redraw_boxes()
 
         self.value = 2
 
@@ -76,51 +75,54 @@ class MainWindow(QMainWindow):
         toolbar.setIconSize(QSize(16, 16))
         self.addToolBar(toolbar)
 
-        self.boton_anadir = QAction("Add box", self)
-        self.boton_anadir.setStatusTip("Add mode active")
-        self.boton_anadir.triggered.connect(self.clickOnAddBox)
-        self.boton_anadir.setCheckable(True)
-        toolbar.addAction(self.boton_anadir)
+        self.button_anadir = QAction("Add box", self)
+        self.button_anadir.setStatusTip("Add mode active")
+        self.button_anadir.triggered.connect(self.clickOnAddBox)
+        self.button_anadir.setCheckable(True)
+        toolbar.addAction(self.button_anadir)
 
         toolbar.addSeparator()
 
-        self.boton_borrar = QAction("Delete box", self)
-        self.boton_borrar.setStatusTip("mode borrar activado")
-        self.boton_borrar.triggered.connect(self.clickOnDeleteBox)
-        self.boton_borrar.setCheckable(True)
-        toolbar.addAction(self.boton_borrar)
+        self.button_borrar = QAction("Delete box", self)
+        self.button_borrar.setStatusTip("Delete mode active")
+        self.button_borrar.triggered.connect(self.clickOnDeleteBox)
+        self.button_borrar.setCheckable(True)
+        toolbar.addAction(self.button_borrar)
+
+        self.button_redraw = QAction("Force redraw", self)
+        self.button_redraw.setStatusTip("Redrawing everything")
+        self.button_redraw.triggered.connect(self.redraw_boxes)
+        self.button_redraw.setCheckable(False)
+        toolbar.addAction(self.button_redraw)
 
         self.mode = "Default"
 
     def clickOnAddBox(self, s):
         print("click on add", s)
         if s:
-            self.boton_borrar.setChecked(False)
+            self.button_borrar.setChecked(False)
             self.mode = "Add"
         else:
             self.mode = "Default"
 
     def clickOnDeleteBox(self, s):
-        global _mode
         print("click on delete", s)
         if s:
-            self.boton_anadir.setChecked(False)
+            self.button_anadir.setChecked(False)
             self.mode = "Delete"
         else:
             self.mode = "Default"
 
-    def render_boxes(self):
-        # self.clearLayout()
-        self.entrance.render_with_children(self.layout, 0, 0)
-
     def get_mode(self):
         return self.mode
 
-    # def clearLayout(self):  # Magia potagia que limpia el layout
-    #     while self.layout.count():
-    #         child = self.layout.takeAt(0)
-    #         if child.widget():
-    #             child.widget().deleteLater()
+    def redraw_boxes(self):
+        while self.layout.count():  # Cleanup loop
+            child = self.layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+        entranceGUI = BoxGUI(self.entrance)  # Renders boxes
+        entranceGUI.render_with_children(self.layout, 0, 0)
 
 
 app = QApplication(sys.argv)
