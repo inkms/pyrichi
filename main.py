@@ -1,56 +1,11 @@
 """Pantalla principal de la aplicacion
 """
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QPushButton, QWidget,
-                             QToolBar, QVBoxLayout, QHBoxLayout, QGridLayout,
-                             QAction)
+from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLayout, QMainWindow, QPushButton,
+                             QWidget, QToolBar, QGridLayout, QAction)
 from PyQt5.QtCore import QSize
 from components.box import Box
-
-
-class BoxGUI(QPushButton):
-
-    def __init__(self, box):
-        super().__init__()
-        self.setAutoFillBackground(True)
-        self.box = box
-        self.setText(str(box.get_id()))
-        self.clicked.connect(self.processClick)
-
-    def render_with_children(self, layout, row_initial, column_initial):
-        layout.addWidget(self, row_initial, column_initial)
-        print("Adding box {} on row {} and column {}".format(
-            self.box.get_id(),
-            row_initial, column_initial))
-        column = column_initial + 1
-        row = row_initial
-        for child in self.box.get_children():
-            nueva_box_gui = BoxGUI(child)
-            row = nueva_box_gui.render_with_children(layout, row, column)
-        return row + 1
-
-    def processClick(self):
-        mode = self.window().get_mode()
-        if mode == "Add":
-            self.processClickAddMode()
-            return
-        if mode == "Delete":
-            self.processClickDeleteMode()
-            return
-        self.processClickDefaultMode()
-
-    def processClickAddMode(self):
-        print("Add mode click")
-        Box(self.box)
-        self.window().redraw_boxes()
-
-    def processClickDeleteMode(self):
-        print("Delete mode click")
-        self.box.set_parent(None)
-        self.window().redraw_boxes()
-
-    def processClickDefaultMode(self):
-        print("Default mode click")
+from gui.box_gui import BoxGUI
 
 
 class MainWindow(QMainWindow):
@@ -61,14 +16,15 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Pyrichi")
 
         self.entrance = Box()
-        self.layout = QGridLayout()
+        self.box_layout = QGridLayout()
+        # self.main_layout.addS
 
         self.redraw_boxes()
 
         self.value = 2
 
         widget = QWidget()
-        widget.setLayout(self.layout)
+        widget.setLayout(self.box_layout)
         self.setCentralWidget(widget)
 
         toolbar = QToolBar("My main toolbar")
@@ -97,17 +53,17 @@ class MainWindow(QMainWindow):
 
         self.mode = "Default"
 
-    def clickOnAddBox(self, s):
-        print("click on add", s)
-        if s:
+    def clickOnAddBox(self, selected: bool):
+        print("click on add", selected)
+        if selected:
             self.button_borrar.setChecked(False)
             self.mode = "Add"
         else:
             self.mode = "Default"
 
-    def clickOnDeleteBox(self, s):
-        print("click on delete", s)
-        if s:
+    def clickOnDeleteBox(self, selected: bool):
+        print("click on delete", selected)
+        if selected:
             self.button_anadir.setChecked(False)
             self.mode = "Delete"
         else:
@@ -117,12 +73,12 @@ class MainWindow(QMainWindow):
         return self.mode
 
     def redraw_boxes(self):
-        while self.layout.count():  # Cleanup loop
-            child = self.layout.takeAt(0)
+        while self.box_layout.count():  # Cleanup loop
+            child = self.box_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
         entranceGUI = BoxGUI(self.entrance)  # Renders boxes
-        entranceGUI.render_with_children(self.layout, 0, 0)
+        entranceGUI.render_with_children(self.box_layout, 0, 0)
 
 
 app = QApplication(sys.argv)
