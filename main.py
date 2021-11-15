@@ -1,8 +1,8 @@
 """Pantalla principal de la aplicacion
 """
 import sys
-from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QLayout, QMainWindow, QPushButton,
-                             QWidget, QToolBar, QGridLayout, QAction)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QToolBar,
+                             QGridLayout, QAction)
 from PyQt5.QtCore import QSize
 from components.box import Box
 from gui.box_gui import BoxGUI

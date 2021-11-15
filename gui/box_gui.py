@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import (QApplication, QLayout, QMainWindow, QPushButton,
-                             QWidget, QLabel, QVBoxLayout, QAction)
+from PyQt5.QtWidgets import (QLayout, QPushButton,
+                             QWidget, QLabel, QVBoxLayout)
 # from PyQt5.QtCore import QSize
 from components.box import Box
 
