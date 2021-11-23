@@ -42,12 +42,6 @@ class MainWindow(QMainWindow):
         self.button_borrar.setCheckable(True)
         toolbar.addAction(self.button_borrar)
 
-        self.button_redraw = QAction("Force redraw", self)
-        self.button_redraw.setStatusTip("Redrawing everything")
-        self.button_redraw.triggered.connect(self.redraw_boxes)
-        self.button_redraw.setCheckable(False)
-        toolbar.addAction(self.button_redraw)
-
         self.mode = "Default"
 
     def clickOnAddBox(self, selected: bool):
