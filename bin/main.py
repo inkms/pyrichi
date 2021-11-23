@@ -1,5 +1,3 @@
-"""Pantalla principal de la aplicacion
-"""
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QToolBar,
                              QGridLayout, QAction)
@@ -17,7 +15,6 @@ class MainWindow(QMainWindow):
 
         self.entrance = Box()
         self.box_layout = QGridLayout()
-        # self.main_layout.addS
 
         self.redraw_boxes()
 
