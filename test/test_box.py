@@ -9,11 +9,6 @@ class TestBoxCreateMethods(unittest.TestCase):
         box1 = Box()
         self.assertNotEqual(box1.get_id(), None)
 
-    def test_when_create_box_with_parent_then_parent_is_set(self):
-        box1 = Box()
-        box2 = Box(box1)
-        self.assertEqual(box2.get_parent(), box1)
-
     def test_when_creating_multiple_boxes_then_boxes_have_different_ids(self):
         box1 = Box()
         box2 = Box()
@@ -21,57 +16,52 @@ class TestBoxCreateMethods(unittest.TestCase):
 
 
 class TestBoxChildMethods(unittest.TestCase):
-    def test_when_set_parent_to_box2_then_box2_becomes_parent(self):
+    def test_when_add_child_then_box_becomes_parent(self):
         box1 = Box()
         box2 = Box()
-        box1.set_parent(box2)
-        self.assertEqual(box1.get_parent(), box2)
+        box1.add_child(box2)
+        self.assertEqual(box2.get_parent(), box1)
 
-    def test_when_set_parent_to_box2_then_box1_becomes_child_of_box2(self):
+    def test_when_add_box2_to_1_then_box2_becomes_child_of_box1(self):
         box1 = Box()
         box2 = Box()
-        box1.set_parent(box2)
-        self.assertEqual(box2.get_children()[0], box1)
+        box1.add_child(box2)
+        self.assertEqual(box1.get_children(), [box2])
 
     def test_when_giving_few_children_then_box_has_few_children(self):
         boxm1 = Box()
         boxh1 = Box()
         boxh2 = Box()
-        boxh1.set_parent(boxm1)
-        boxh2.set_parent(boxm1)
+        boxm1.add_child(boxh1)
+        boxm1.add_child(boxh2)
         self.assertEqual(boxm1.get_children(), [boxh1, boxh2])
 
-    def test_when_set_parent_to_self_then_raises_error(self):
+    def test_when_add_sef_as_child_then_raises_error(self):
         box1 = Box()
         with self.assertRaises(ValueError):
-            box1.set_parent(box1)
+            box1.add_child(box1)
 
     def test_when_setting_parent_to_child_then_loop_is_broken(self):
         box1 = Box()
         box2 = Box()
-        box1.set_parent(box2)
-        box2.set_parent(box1)
+        box1.add_child(box2)
+        box2.add_child(box1)
         self.assertNotEqual(box1.get_parent(), box2)
 
     def test_when_setting_parent_to_descendant_then_loop_is_broken(self):
         box1 = Box()
         box2 = Box()
         box3 = Box()
-        box3.set_parent(box2)
-        box2.set_parent(box1)
-        box1.set_parent(box3)
+        box3.add_child(box2)
+        box2.add_child(box1)
+        box1.add_child(box3)
         self.assertEqual(box3.get_parent(), None)
-
-    def test_when_removing_parent_then_child_looses_parent(self):
-        box1 = Box()
-        box2 = Box(box1)
-        box2.set_parent(None)
-        self.assertEqual(box2.get_parent(), None)
 
     def test_when_removing_parent_then_parent_looses_child(self):
         box1 = Box()
-        box2 = Box(box1)
-        box2.set_parent(None)
+        box2 = Box()
+        box1.add_child(box2)
+        box1.delete_child(box2)
         self.assertEqual(box1.get_children(), [])
 
 
@@ -132,8 +122,8 @@ class TestBoxDefinedMethod(unittest.TestCase):
         load2 = Load("Dos", 200)
         box1.add_load(load1)
         box2.add_load(load2)
-        box1.set_parent(box0)
-        box2.set_parent(box0)
+        box0.add_child(box1)
+        box0.add_child(box2)
         self.assertEqual(box0.defined(), True)
 
     def test_when_undefined_children_and_no_loads_then_it_is_undefined(self):
@@ -144,8 +134,8 @@ class TestBoxDefinedMethod(unittest.TestCase):
         load2 = Load("Dos")
         box1.add_load(load1)
         box2.add_load(load2)
-        box1.set_parent(box0)
-        box2.set_parent(box0)
+        box0.add_child(box1)
+        box0.add_child(box2)
         self.assertEqual(box0.defined(), False)
 
     def test_when_defined_children_and_loads_then_defined(self):
@@ -155,7 +145,7 @@ class TestBoxDefinedMethod(unittest.TestCase):
         load2 = Load("Dos", 200)
         box1.add_load(load1)
         box0.add_load(load2)
-        box1.set_parent(box0)
+        box0.add_child(box1)
         self.assertEqual(box0.defined(), True)
 
     def test_when_undefined_children_and_defined_loads_then_undefined(self):
@@ -165,7 +155,7 @@ class TestBoxDefinedMethod(unittest.TestCase):
         load2 = Load("Dos", 200)
         box1.add_load(load1)
         box0.add_load(load2)
-        box1.set_parent(box0)
+        box0.add_child(box1)
         self.assertEqual(box0.defined(), False)
 
     def test_when_defined_children_and_undefined_loads_then_undefined(self):
@@ -175,7 +165,7 @@ class TestBoxDefinedMethod(unittest.TestCase):
         load2 = Load("Dos")
         box1.add_load(load1)
         box0.add_load(load2)
-        box1.set_parent(box0)
+        box0.add_child(box1)
         self.assertEqual(box0.defined(), False)
 
     def test_when_undefined_children_and_undefined_loads_then_undefined(self):
@@ -185,7 +175,7 @@ class TestBoxDefinedMethod(unittest.TestCase):
         load2 = Load("Dos")
         box1.add_load(load1)
         box0.add_load(load2)
-        box1.set_parent(box0)
+        box0.add_child(box1)
         self.assertEqual(box0.defined(), False)
 
 

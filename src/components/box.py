@@ -7,34 +7,33 @@ class Box():
     # Static variables
     counter = 0  # ID counter
 
-    def __init__(self, box_parent=None):
+    def __init__(self):
         self.loads = []
         self.children = []
         self.parent = None
         self.id = Box.counter
         Box.counter += 1
-        if box_parent is not None:
-            self.set_parent(box_parent)
 
-    def set_parent(self, parent: "Box"):
-        """
-        Configure parent as preceding box, and adds itself as child
-        """
-        if parent is self:
-            raise ValueError("A box cannot be it's own parent")
-        if self.parent is not None:
-            self.parent._delete_child(self)
-        self._detect_and_prevent_loop(parent)
-        if parent is not None:
-            parent._add_child(self)
+    def _set_parent(self, parent: "Box"):
         self.parent = parent
 
-    def _add_child(self, child: "Box"):
+    def add_child(self, child: "Box"):
+        """
+        Adds child and sets itself as parent for the child
+        """
+        if child is self:
+            raise ValueError("A box cannot be it's own parent")
         self.children.append(child)
+        if child.get_parent() is not None:
+            child.get_parent().delete_child(child)
+        child._set_parent(self)
+        self._detect_and_prevent_loop(self)
+        
 
-    def _delete_child(self, child: "Box"):
+    def delete_child(self, child: "Box"):
         try:
             self.children.remove(child)
+            child._set_parent(None)
         except Exception as e:
             print(f"{child.get_id()} is not a child of this box: {e}")
 
@@ -85,4 +84,12 @@ class Box():
         for child in self.get_children():
             if not child.defined():
                 return False
+        return True
+
+    def erase(self):
+        """Removes all links to itself
+        """
+        self.parent.delete_child(self)
+        for child in self.get_children():
+            self.delete_child(child)
         return True
