@@ -51,7 +51,7 @@ class Box():
     def _detect_and_prevent_loop(self, box_buscada: "Box"):
         for child in self.get_children():
             if child is box_buscada:
-                child.set_parent(None)
+                child.parent.delete_child(child)
                 return
             child._detect_and_prevent_loop(box_buscada)
 
@@ -86,10 +86,7 @@ class Box():
                 return False
         return True
 
-    def erase(self):
-        """Removes all links to itself
-        """
-        self.parent.delete_child(self)
+    def __del__(self):
         for child in self.get_children():
             self.delete_child(child)
-        return True
+            del child

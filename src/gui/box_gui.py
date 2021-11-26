@@ -40,12 +40,13 @@ class BoxGUI(QPushButton):
 
     def processClickAddMode(self):
         print("Add mode click")
-        Box(self.box)
+        self.box.add_child(Box())
         self.window().redraw_boxes()
 
     def processClickDeleteMode(self):
         print("Delete mode click")
-        self.box.set_parent(None)
+        self.box.parent.delete_child(self.box)
+        del self.box
         self.window().redraw_boxes()
 
     def processClickDefaultMode(self):
@@ -55,6 +56,10 @@ class BoxGUI(QPushButton):
     def get_box(self) -> Box:
         return self.box
 
+class EntranceBoxGUI(BoxGUI):
+
+    def processClickDeleteMode(self):
+        print("You cannot delete the entrance box.")
 
 class BoxDetails(QWidget):
 

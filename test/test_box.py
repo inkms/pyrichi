@@ -36,7 +36,7 @@ class TestBoxChildMethods(unittest.TestCase):
         boxm1.add_child(boxh2)
         self.assertEqual(boxm1.get_children(), [boxh1, boxh2])
 
-    def test_when_add_sef_as_child_then_raises_error(self):
+    def test_when_add_self_as_child_then_raises_error(self):
         box1 = Box()
         with self.assertRaises(ValueError):
             box1.add_child(box1)
@@ -46,7 +46,7 @@ class TestBoxChildMethods(unittest.TestCase):
         box2 = Box()
         box1.add_child(box2)
         box2.add_child(box1)
-        self.assertNotEqual(box1.get_parent(), box2)
+        self.assertNotEqual(box2.get_parent(), box1)
 
     def test_when_setting_parent_to_descendant_then_loop_is_broken(self):
         box1 = Box()
@@ -55,7 +55,7 @@ class TestBoxChildMethods(unittest.TestCase):
         box3.add_child(box2)
         box2.add_child(box1)
         box1.add_child(box3)
-        self.assertEqual(box3.get_parent(), None)
+        self.assertEqual(box1.get_parent(), None)
 
     def test_when_removing_parent_then_parent_looses_child(self):
         box1 = Box()
@@ -177,6 +177,16 @@ class TestBoxDefinedMethod(unittest.TestCase):
         box0.add_load(load2)
         box0.add_child(box1)
         self.assertEqual(box0.defined(), False)
+
+
+
+class TestBoxDelete(unittest.TestCase):
+
+    def test_when_deleting_box_then_reference_undefined(self):
+        box = Box()
+        del box
+        with self.assertRaises(UnboundLocalError):
+            box.add_child(Box())
 
 
 if __name__ == '__main__':

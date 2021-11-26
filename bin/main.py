@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QToolBar,
                              QGridLayout, QAction)
 from PyQt5.QtCore import QSize
 from components.box import Box
-from gui.box_gui import BoxGUI
+from gui.box_gui import BoxGUI, EntranceBoxGUI
 
 
 class MainWindow(QMainWindow):
@@ -68,8 +68,8 @@ class MainWindow(QMainWindow):
             child = self.box_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
-        entranceGUI = BoxGUI(self.entrance)  # Renders boxes
-        entranceGUI.render_with_children(self.box_layout, 0, 0)
+        self.entranceGUI = EntranceBoxGUI(self.entrance)
+        self.entranceGUI.render_with_children(self.box_layout, 0, 0)
 
 
 app = QApplication(sys.argv)
