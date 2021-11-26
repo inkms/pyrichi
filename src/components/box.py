@@ -12,6 +12,7 @@ class Box():
         self.children = []
         self.parent = None
         self.id = Box.counter
+        self.gui = None
         Box.counter += 1
 
     def _set_parent(self, parent: "Box"):
@@ -28,7 +29,6 @@ class Box():
             child.get_parent().delete_child(child)
         child._set_parent(self)
         self._detect_and_prevent_loop(self)
-        
 
     def delete_child(self, child: "Box"):
         try:
@@ -45,8 +45,10 @@ class Box():
     def delete_load(self, load: Load):
         """Deletes load from the list of loads connected directly to this box
         """
-        # Try-except
-        self.loads.remove(load)
+        try:
+            self.loads.remove(load)
+        except ValueError:
+            pass
 
     def _detect_and_prevent_loop(self, box_buscada: "Box"):
         for child in self.get_children():

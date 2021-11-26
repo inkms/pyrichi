@@ -28,26 +28,37 @@ class MainWindow(QMainWindow):
         toolbar.setIconSize(QSize(16, 16))
         self.addToolBar(toolbar)
 
-        self.button_anadir = QAction("Add box", self)
-        self.button_anadir.setStatusTip("Add mode active")
-        self.button_anadir.triggered.connect(self.clickOnAddBox)
-        self.button_anadir.setCheckable(True)
-        toolbar.addAction(self.button_anadir)
+        self.button_add = QAction("Add box", self)
+        self.button_add.setStatusTip("Add mode active")
+        self.button_add.triggered.connect(self.clickOnAddBox)
+        self.button_add.setCheckable(True)
+        toolbar.addAction(self.button_add)
 
         toolbar.addSeparator()
 
-        self.button_borrar = QAction("Delete box", self)
-        self.button_borrar.setStatusTip("Delete mode active")
-        self.button_borrar.triggered.connect(self.clickOnDeleteBox)
-        self.button_borrar.setCheckable(True)
-        toolbar.addAction(self.button_borrar)
+        self.button_delete = QAction("Delete box", self)
+        self.button_delete.setStatusTip("Delete mode active")
+        self.button_delete.triggered.connect(self.clickOnDeleteBox)
+        self.button_delete.setCheckable(True)
+        toolbar.addAction(self.button_delete)
+
+        toolbar.addSeparator()
+
+        self.button_move = QAction("Move box", self)
+        self.button_move.setStatusTip("Move mode active")
+        self.button_move.triggered.connect(self.clickOnMoveBox)
+        self.button_move.setCheckable(True)
+        toolbar.addAction(self.button_move)
 
         self.mode = "Default"
+        self.selection_valid = False
 
     def clickOnAddBox(self, selected: bool):
         print("click on add", selected)
         if selected:
-            self.button_borrar.setChecked(False)
+            self.button_delete.setChecked(False)
+            self.button_move.setChecked(False)
+            self.selection_valid = False
             self.mode = "Add"
         else:
             self.mode = "Default"
@@ -55,10 +66,23 @@ class MainWindow(QMainWindow):
     def clickOnDeleteBox(self, selected: bool):
         print("click on delete", selected)
         if selected:
-            self.button_anadir.setChecked(False)
+            self.button_add.setChecked(False)
+            self.button_move.setChecked(False)
+            self.selection_valid = False
             self.mode = "Delete"
         else:
             self.mode = "Default"
+
+    def clickOnMoveBox(self, selected: bool):
+        print("click on move", selected)
+        if selected:
+            self.button_add.setChecked(False)
+            self.button_delete.setChecked(False)
+            self.mode = "Move"
+        else:
+            self.mode = "Default"
+            self.redraw_boxes()
+            self.selection_valid = False
 
     def get_mode(self):
         return self.mode

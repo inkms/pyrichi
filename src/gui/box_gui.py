@@ -5,11 +5,13 @@ from components.box import Box
 
 
 class BoxGUI(QPushButton):
+    _selection_valid = False
 
     def __init__(self, box: Box):
         super().__init__()
         self.setAutoFillBackground(True)
         self.box = box
+        box.gui = self
         self.setText(str(box.get_id()))
         self.clicked.connect(self.processClick)
         self.details = BoxDetails(self.box, self)
@@ -28,6 +30,11 @@ class BoxGUI(QPushButton):
             row = nueva_box_gui.render_with_children(layout, row, column)
         return row + 1
 
+    def disableWrongChoices(self):
+        self.setEnabled(False)
+        for child in self.box.get_children():
+            child.gui.disableWrongChoices()
+
     def processClick(self):
         mode = self.window().get_mode()
         if mode == "Add":
@@ -35,6 +42,9 @@ class BoxGUI(QPushButton):
             return
         if mode == "Delete":
             self.processClickDeleteMode()
+            return
+        if mode == "Move":
+            self.processClickMoveMode()
             return
         self.processClickDefaultMode()
 
@@ -49,6 +59,20 @@ class BoxGUI(QPushButton):
         del self.box
         self.window().redraw_boxes()
 
+    def processClickMoveMode(self):
+        print("Move mode click")
+        if not self.window().selection_valid:
+            self.window().selection_valid = True
+            self.window().selected_box = self.box
+            self.disableWrongChoices()
+            print("Selected box for moving {}".format(self.box.get_id()))
+        else:
+            self.box.add_child(self.window().selected_box)
+            self.window().selection_valid = False
+            print("Moved box {} to hang from {}".format(
+                self.window().selected_box.get_id(), self.box.get_id()))
+            self.window().redraw_boxes()
+
     def processClickDefaultMode(self):
         print("Default mode click")
         self.details.show()
@@ -56,10 +80,12 @@ class BoxGUI(QPushButton):
     def get_box(self) -> Box:
         return self.box
 
+
 class EntranceBoxGUI(BoxGUI):
 
     def processClickDeleteMode(self):
         print("You cannot delete the entrance box.")
+
 
 class BoxDetails(QWidget):
 
