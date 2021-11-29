@@ -17,6 +17,11 @@ class BoxGUI(QPushButton):
     def render_with_children(self, layout: QLayout,
                              row_initial: int,
                              column_initial: int):
+        """Adds itself and all of its children to a grid layout using
+        the offset specified by row_initial and column_initial. This
+        is done by creating a new BoxGUI for each child, the old ones,
+        if present, are discarded.
+        """
         layout.addWidget(self, row_initial, column_initial)
         print("Adding box {} on row {} and column {}".format(
             self.get_box().get_id(),
@@ -29,6 +34,9 @@ class BoxGUI(QPushButton):
         return row + 1
 
     def processClick(self):
+        """Directs the program to the right function to process the click based
+        on the mode of the window
+        """
         mode = self.window().get_mode()
         if mode == "Add":
             self.processClickAddMode()
@@ -39,20 +47,28 @@ class BoxGUI(QPushButton):
         self.processClickDefaultMode()
 
     def processClickAddMode(self):
+        """Adds a new box to this box
+        """
         print("Add mode click")
         Box(self.box)
         self.window().redraw_boxes()
 
     def processClickDeleteMode(self):
+        """Deletes this box and all of its children
+        """
         print("Delete mode click")
         self.box.set_parent(None)
         self.window().redraw_boxes()
 
     def processClickDefaultMode(self):
+        """Displays box information and allows to change the box parameters
+        """
         print("Default mode click")
         self.details.show()
 
     def get_box(self) -> Box:
+        """Returns a reference to the underlying Box object
+        """
         return self.box
 
 

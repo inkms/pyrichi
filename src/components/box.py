@@ -49,13 +49,6 @@ class Box():
         # Try-except
         self.loads.remove(load)
 
-    def _detect_and_prevent_loop(self, box_buscada: "Box"):
-        for child in self.get_children():
-            if child is box_buscada:
-                child.set_parent(None)
-                return
-            child._detect_and_prevent_loop(box_buscada)
-
     def get_id(self):
         """Returns box id
         """
