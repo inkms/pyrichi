@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QToolBar,
 from PyQt5.QtCore import QSize
 from components.box import Box
 from gui.box_gui import EntranceBoxGUI
+# import logging  #TODO usarlo
 
 
 class MainWindow(QMainWindow):

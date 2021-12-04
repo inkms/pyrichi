@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import (QLayout, QPushButton,
 # from PyQt5.QtCore import QSize
 from components.box import Box
 
+#_selection_valid accesible a ambas clases
 
 class BoxGUI(QPushButton):
     _selection_valid = False
@@ -61,7 +62,7 @@ class BoxGUI(QPushButton):
 
     def processClickMoveMode(self):
         print("Move mode click")
-        if not self.window().selection_valid:
+        if not self.window().selection_valid: # TODO nombre mas claro
             self.window().selection_valid = True
             self.window().selected_box = self.box
             self.disableWrongChoices()
@@ -81,7 +82,7 @@ class BoxGUI(QPushButton):
         return self.box
 
 
-class EntranceBoxGUI(BoxGUI):
+class EntranceBoxGUI(BoxGUI): # TODO Dale la vuelta
 
     def processClickDeleteMode(self):
         print("You cannot delete the entrance box.")

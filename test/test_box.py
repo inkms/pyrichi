@@ -179,14 +179,21 @@ class TestBoxDefinedMethod(unittest.TestCase):
         self.assertEqual(box0.defined(), False)
 
 
-
 class TestBoxDelete(unittest.TestCase):
 
-    def test_when_deleting_box_then_reference_undefined(self):
+    def test_when_deleting_box_then_reference_lost(self):
         box = Box()
         del box
         with self.assertRaises(UnboundLocalError):
-            box.add_child(Box())
+            box.get_id(Box()) #commentario para que flake8 lo ignore
+
+    # def test_when_deleting_box_then_children_lost(self):
+    #     box1 = Box()
+    #     box2 = Box()
+    #     box1.add_child(box2)
+    #     del box1
+    #     with self.assertRaises(UnboundLocalError):
+    #         box2.get_id()
 
 
 if __name__ == '__main__':
