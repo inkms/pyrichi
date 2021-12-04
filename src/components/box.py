@@ -6,6 +6,7 @@ from components.load import Load
 class Box():
     # Static variables
     counter = 0  # ID counter
+# TODO hacer el esqueleto de aplicar la normativa de forma modular
 
     def __init__(self):
         self.loads = []
@@ -14,6 +15,7 @@ class Box():
         self.id = Box.counter
         self.gui = None
         Box.counter += 1
+        self.waste = list(range(1, 10000000)) # TODO For test only, there is memory leak
 
     def _set_parent(self, parent: "Box"):
         self.parent = parent
@@ -28,14 +30,23 @@ class Box():
         if child.get_parent() is not None:
             child.get_parent().delete_child(child)
         child._set_parent(self)
-        self._detect_and_prevent_loop(self)
 
     def delete_child(self, child: "Box"):
+        """
+        Deletes child from list of children
+        """
         try:
             self.children.remove(child)
             child._set_parent(None)
         except Exception as e:
             print(f"{child.get_id()} is not a child of this box: {e}")
+
+    def _is_descendent(self, box_buscada: "Box"):  # or ascendent? TODO
+        for child in self.get_children():
+            if child is box_buscada:
+                return True
+            child._is_descendent(box_buscada)
+        return False
 
     def add_load(self, load: Load):
         """Adds load to the list of loads connected directly to this box
@@ -49,13 +60,6 @@ class Box():
             self.loads.remove(load)
         except ValueError:
             pass
-
-    def _detect_and_prevent_loop(self, box_buscada: "Box"):
-        for child in self.get_children():
-            if child is box_buscada:
-                child.parent.delete_child(child)
-                return
-            child._detect_and_prevent_loop(box_buscada)
 
     def get_id(self):
         """Returns box id
@@ -89,6 +93,7 @@ class Box():
         return True
 
     def __del__(self):
+        del self.gui
         for child in self.get_children():
             self.delete_child(child)
             del child
