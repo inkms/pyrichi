@@ -3,10 +3,10 @@ from components.load import Load
 
 
 # Here goes the class
-class Box():
+class Box:
     # Static variables
     counter = 0  # ID counter
-# TODO hacer el esqueleto de aplicar la normativa de forma modular
+# TODO skeleton for adding thickness calculation and normative in modular way
 
     def __init__(self):
         self.loads = []
@@ -15,7 +15,7 @@ class Box():
         self.id = Box.counter
         self.gui = None
         Box.counter += 1
-        self.waste = list(range(1, 10000000)) # TODO For test only, there is memory leak
+        # self.waste = list(range(1, 10000000)) # TODO For test only, there is memory leak
 
     def _set_parent(self, parent: "Box"):
         self.parent = parent
@@ -41,11 +41,11 @@ class Box():
         except Exception as e:
             print(f"{child.get_id()} is not a child of this box: {e}")
 
-    def _is_descendent(self, box_buscada: "Box"):  # or ascendent? TODO
+    def _is_descendant(self, wanted_box: "Box"):  # or ascendant? TODO
         for child in self.get_children():
-            if child is box_buscada:
+            if child is wanted_box:
                 return True
-            child._is_descendent(box_buscada)
+            child._is_descendant(wanted_box)
         return False
 
     def add_load(self, load: Load):

@@ -1,7 +1,7 @@
 # Here go the imports
 
 
-class Load():
+class Load:
     counter = 0
 
     def __init__(self, name, power=None):

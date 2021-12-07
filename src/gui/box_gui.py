@@ -1,9 +1,9 @@
-from PyQt5.QtWidgets import (QLayout, QPushButton,
-                             QWidget, QLabel, QVBoxLayout)
+from PyQt5.QtWidgets import (QPushButton, QWidget, QLabel, QVBoxLayout, QGridLayout)
 # from PyQt5.QtCore import QSize
 from components.box import Box
 
-#_selection_valid accesible a ambas clases
+# selection_valid accessible to both classes
+
 
 class BoxGUI(QPushButton):
     _selection_valid = False
@@ -14,10 +14,10 @@ class BoxGUI(QPushButton):
         self.box = box
         box.gui = self
         self.setText(str(box.get_id()))
-        self.clicked.connect(self.processClick)
+        self.clicked.connect(self.process_click)
         self.details = BoxDetails(self.box, self)
 
-    def render_with_children(self, layout: QLayout,
+    def render_with_children(self, layout: QGridLayout,
                              row_initial: int,
                              column_initial: int):
         layout.addWidget(self, row_initial, column_initial)
@@ -27,45 +27,45 @@ class BoxGUI(QPushButton):
         column = column_initial + 1
         row = row_initial
         for child in self.get_box().get_children():
-            nueva_box_gui = BoxGUI(child)
-            row = nueva_box_gui.render_with_children(layout, row, column)
+            new_box_gui = BoxGUI(child)
+            row = new_box_gui.render_with_children(layout, row, column)
         return row + 1
 
-    def disableWrongChoices(self):
+    def disable_descendant_boxes(self):
         self.setEnabled(False)
         for child in self.box.get_children():
-            child.gui.disableWrongChoices()
+            child.gui.disable_descendant_boxes()
 
-    def processClick(self):
+    def process_click(self):
         mode = self.window().get_mode()
         if mode == "Add":
-            self.processClickAddMode()
+            self.process_click_add_mode()
             return
         if mode == "Delete":
-            self.processClickDeleteMode()
+            self.process_click_delete_mode()
             return
         if mode == "Move":
-            self.processClickMoveMode()
+            self.process_click_move_mode()
             return
-        self.processClickDefaultMode()
+        self.process_click_default_mode()
 
-    def processClickAddMode(self):
+    def process_click_add_mode(self):
         print("Add mode click")
         self.box.add_child(Box())
         self.window().redraw_boxes()
 
-    def processClickDeleteMode(self):
+    def process_click_delete_mode(self):
         print("Delete mode click")
         self.box.parent.delete_child(self.box)
         del self.box
         self.window().redraw_boxes()
 
-    def processClickMoveMode(self):
+    def process_click_move_mode(self):
         print("Move mode click")
-        if not self.window().selection_valid: # TODO nombre mas claro
+        if not self.window().selection_valid:  # TODO clearer name
             self.window().selection_valid = True
             self.window().selected_box = self.box
-            self.disableWrongChoices()
+            self.disable_descendant_boxes()
             print("Selected box for moving {}".format(self.box.get_id()))
         else:
             self.box.add_child(self.window().selected_box)
@@ -74,7 +74,7 @@ class BoxGUI(QPushButton):
                 self.window().selected_box.get_id(), self.box.get_id()))
             self.window().redraw_boxes()
 
-    def processClickDefaultMode(self):
+    def process_click_default_mode(self):
         print("Default mode click")
         self.details.show()
 
@@ -82,9 +82,9 @@ class BoxGUI(QPushButton):
         return self.box
 
 
-class EntranceBoxGUI(BoxGUI): # TODO Dale la vuelta
+class EntranceBoxGUI(BoxGUI):  # TODO Turn around
 
-    def processClickDeleteMode(self):
+    def process_click_delete_mode(self):
         print("You cannot delete the entrance box.")
 
 

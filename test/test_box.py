@@ -29,33 +29,17 @@ class TestBoxChildMethods(unittest.TestCase):
         self.assertEqual(box1.get_children(), [box2])
 
     def test_when_giving_few_children_then_box_has_few_children(self):
-        boxm1 = Box()
-        boxh1 = Box()
-        boxh2 = Box()
-        boxm1.add_child(boxh1)
-        boxm1.add_child(boxh2)
-        self.assertEqual(boxm1.get_children(), [boxh1, boxh2])
+        box_m1 = Box()
+        box_h1 = Box()
+        box_h2 = Box()
+        box_m1.add_child(box_h1)
+        box_m1.add_child(box_h2)
+        self.assertEqual(box_m1.get_children(), [box_h1, box_h2])
 
     def test_when_add_self_as_child_then_raises_error(self):
         box1 = Box()
         with self.assertRaises(ValueError):
             box1.add_child(box1)
-
-    def test_when_setting_parent_to_child_then_loop_is_broken(self):
-        box1 = Box()
-        box2 = Box()
-        box1.add_child(box2)
-        box2.add_child(box1)
-        self.assertNotEqual(box2.get_parent(), box1)
-
-    def test_when_setting_parent_to_descendant_then_loop_is_broken(self):
-        box1 = Box()
-        box2 = Box()
-        box3 = Box()
-        box3.add_child(box2)
-        box2.add_child(box1)
-        box1.add_child(box3)
-        self.assertEqual(box1.get_parent(), None)
 
     def test_when_removing_parent_then_parent_looses_child(self):
         box1 = Box()
@@ -185,7 +169,8 @@ class TestBoxDelete(unittest.TestCase):
         box = Box()
         del box
         with self.assertRaises(UnboundLocalError):
-            box.get_id(Box()) #commentario para que flake8 lo ignore
+            # noinspection PyUnboundLocalVariable
+            box.get_id()
 
     # def test_when_deleting_box_then_children_lost(self):
     #     box1 = Box()
