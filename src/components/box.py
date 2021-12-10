@@ -1,7 +1,6 @@
 # Here go the imports
 from components.load import Load
 
-
 # Here goes the class
 class Box:
     # Static variables

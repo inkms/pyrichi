@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import (QPushButton, QWidget, QLabel, QVBoxLayout, QGridLayout)
 # from PyQt5.QtCore import QSize
 from components.box import Box
+import utils.globalvars
 
-# selection_valid accessible to both classes
+# box_for_move_selected = False
+selected_box = None
 
 
 class BoxGUI(QPushButton):
@@ -61,17 +63,19 @@ class BoxGUI(QPushButton):
         self.window().redraw_boxes()
 
     def process_click_move_mode(self):
+        # global box_for_move_selected
+        global selected_box
         print("Move mode click")
-        if not self.window().selection_valid:  # TODO clearer name
-            self.window().selection_valid = True
-            self.window().selected_box = self.box
+        if not utils.globalvars.box_for_move_selected:
+            utils.globalvars.box_for_move_selected = True
+            selected_box = self.box
             self.disable_descendant_boxes()
             print("Selected box for moving {}".format(self.box.get_id()))
         else:
-            self.box.add_child(self.window().selected_box)
-            self.window().selection_valid = False
+            self.box.add_child(selected_box)
+            utils.globalvars.box_for_move_selected = False
             print("Moved box {} to hang from {}".format(
-                self.window().selected_box.get_id(), self.box.get_id()))
+                selected_box.get_id(), self.box.get_id()))
             self.window().redraw_boxes()
 
     def process_click_default_mode(self):
@@ -80,12 +84,6 @@ class BoxGUI(QPushButton):
 
     def get_box(self) -> Box:
         return self.box
-
-
-class EntranceBoxGUI(BoxGUI):  # TODO Turn around
-
-    def process_click_delete_mode(self):
-        print("You cannot delete the entrance box.")
 
 
 class BoxDetails(QWidget):

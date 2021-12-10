@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QToolBar,
                              QGridLayout, QAction)
 from PyQt5.QtCore import QSize
 from components.box import Box
-from gui.box_gui import EntranceBoxGUI
+from gui.box_gui import BoxGUI
+import utils.globalvars
 import logging
 
 
@@ -11,13 +12,13 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
+        utils.globalvars.initialize()
 
         self.setWindowTitle("Pyrichi")
 
+        self.entranceGUI = None
         self.entrance = Box()
         self.box_layout = QGridLayout()
-
-        self.redraw_boxes()
 
         self.value = 2
 
@@ -55,27 +56,32 @@ class MainWindow(QMainWindow):
         toolbar.addAction(self.button_move)
 
         self.mode = "Default"
-        self.selection_valid = False
+        self.redraw_boxes()
 
     def click_on_add_box(self, selected: bool):
         logging.info("click on add", selected)
         if selected:
             self.button_delete.setChecked(False)
             self.button_move.setChecked(False)
-            self.selection_valid = False
+            utils.globalvars.box_for_move_selected = False
             self.mode = "Add"
+            print(self.mode)
+            self.redraw_boxes()
         else:
             self.mode = "Default"
+            self.redraw_boxes()
 
     def click_on_delete_box(self, selected: bool):
         print("click on delete", selected)
         if selected:
             self.button_add.setChecked(False)
             self.button_move.setChecked(False)
-            self.selection_valid = False
+            utils.globalvars.box_for_move_selected = False
             self.mode = "Delete"
+            self.redraw_boxes()
         else:
             self.mode = "Default"
+            self.redraw_boxes()
 
     def click_on_move_box(self, selected: bool):
         print("click on move", selected)
@@ -83,10 +89,11 @@ class MainWindow(QMainWindow):
             self.button_add.setChecked(False)
             self.button_delete.setChecked(False)
             self.mode = "Move"
+            self.redraw_boxes()
         else:
             self.mode = "Default"
             self.redraw_boxes()
-            self.selection_valid = False
+            utils.globalvars.box_for_move_selected = False
 
     def get_mode(self):
         return self.mode
@@ -96,8 +103,10 @@ class MainWindow(QMainWindow):
             child = self.box_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
-        self.entranceGUI = EntranceBoxGUI(self.entrance)  # Ask Pablo
+        self.entranceGUI = BoxGUI(self.entrance)
         self.entranceGUI.render_with_children(self.box_layout, 0, 0)
+        if self.mode == "Delete":
+            self.entranceGUI.setEnabled(False)
 
 
 app = QApplication(sys.argv)
