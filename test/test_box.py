@@ -41,6 +41,22 @@ class TestBoxChildMethods(unittest.TestCase):
         with self.assertRaises(ValueError):
             box1.add_child(box1)
 
+    def test_when_adding_parent_as_child_then_raises_error(self):
+        box1 = Box()
+        box2 = Box()
+        box1.add_child(box2)
+        with self.assertRaises(ValueError):
+            box2.add_child(box1)
+
+    def test_when_adding_ascendant_as_child_then_raises_error(self):
+        box1 = Box()
+        box2 = Box()
+        box3 = Box()
+        box1.add_child(box2)
+        box2.add_child(box3)
+        with self.assertRaises(ValueError):
+            box3.add_child(box1)
+
     def test_when_removing_parent_then_parent_looses_child(self):
         box1 = Box()
         box2 = Box()

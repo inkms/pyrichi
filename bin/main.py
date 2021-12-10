@@ -31,6 +31,7 @@ class MainWindow(QMainWindow):
 
         self.button_add = QAction("Add box", self)
         self.button_add.setStatusTip("Add mode active")
+        # noinspection PyUnresolvedReferences
         self.button_add.triggered.connect(self.click_on_add_box)
         self.button_add.setCheckable(True)
         toolbar.addAction(self.button_add)
@@ -39,6 +40,7 @@ class MainWindow(QMainWindow):
 
         self.button_delete = QAction("Delete box", self)
         self.button_delete.setStatusTip("Delete mode active")
+        # noinspection PyUnresolvedReferences
         self.button_delete.triggered.connect(self.click_on_delete_box)
         self.button_delete.setCheckable(True)
         toolbar.addAction(self.button_delete)
@@ -47,6 +49,7 @@ class MainWindow(QMainWindow):
 
         self.button_move = QAction("Move box", self)
         self.button_move.setStatusTip("Move mode active")
+        # noinspection PyUnresolvedReferences
         self.button_move.triggered.connect(self.click_on_move_box)
         self.button_move.setCheckable(True)
         toolbar.addAction(self.button_move)
@@ -93,7 +96,7 @@ class MainWindow(QMainWindow):
             child = self.box_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
-        self.entranceGUI = EntranceBoxGUI(self.entrance)
+        self.entranceGUI = EntranceBoxGUI(self.entrance)  # Ask Pablo
         self.entranceGUI.render_with_children(self.box_layout, 0, 0)
 
 

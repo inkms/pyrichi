@@ -20,16 +20,18 @@ class Box:
     def _set_parent(self, parent: "Box"):
         self.parent = parent
 
-    def add_child(self, child: "Box"):
+    def add_child(self, candidate_child: "Box"):
         """
-        Adds child and sets itself as parent for the child
+        Adds candidate_child as child and sets itself as parent for the child
         """
-        if child is self:
+        if candidate_child is self:
             raise ValueError("A box cannot be it's own parent")
-        self.children.append(child)
-        if child.get_parent() is not None:
-            child.get_parent().delete_child(child)
-        child._set_parent(self)
+        if candidate_child._is_ascendant_of(self):
+            raise ValueError("This child is an ascendant of this box. Adding this child would create a loop")
+        self.children.append(candidate_child)
+        if candidate_child.get_parent() is not None:
+            candidate_child.get_parent().delete_child(candidate_child)
+        candidate_child._set_parent(self)
 
     def delete_child(self, child: "Box"):
         """
@@ -37,15 +39,16 @@ class Box:
         """
         try:
             self.children.remove(child)
-            child._set_parent(None)
+            child._set_parent(None)  # Ask Pablo
         except Exception as e:
             print(f"{child.get_id()} is not a child of this box: {e}")
 
-    def _is_descendant(self, wanted_box: "Box"):  # or ascendant? TODO
+    def _is_ascendant_of(self, wanted_box: "Box"):
         for child in self.get_children():
             if child is wanted_box:
                 return True
-            child._is_descendant(wanted_box)
+            if child._is_ascendant_of(wanted_box):
+                return True
         return False
 
     def add_load(self, load: Load):
