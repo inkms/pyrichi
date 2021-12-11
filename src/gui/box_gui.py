@@ -2,6 +2,9 @@ from PyQt5.QtWidgets import (QPushButton, QWidget, QLabel, QVBoxLayout, QGridLay
 # from PyQt5.QtCore import QSize
 from components.box import Box
 import utils.globalvars
+import logging
+
+logger = logging.getLogger(__name__)
 
 # box_for_move_selected = False
 selected_box = None
@@ -23,7 +26,7 @@ class BoxGUI(QPushButton):
                              row_initial: int,
                              column_initial: int):
         layout.addWidget(self, row_initial, column_initial)
-        print("Adding box {} on row {} and column {}".format(
+        logger.debug("Adding box {} on row {} and column {}".format(
             self.get_box().get_id(),
             row_initial, column_initial))
         column = column_initial + 1
@@ -52,34 +55,33 @@ class BoxGUI(QPushButton):
         self.process_click_default_mode()
 
     def process_click_add_mode(self):
-        print("Add mode click")
+        logger.info(f"Add mode click on box {self.box.get_id()}")
         self.box.add_child(Box())
         self.window().redraw_boxes()
 
     def process_click_delete_mode(self):
-        print("Delete mode click")
+        logger.info(f"Delete mode click on box {self.box.get_id()}")
         self.box.parent.delete_child(self.box)
         del self.box
         self.window().redraw_boxes()
 
     def process_click_move_mode(self):
-        # global box_for_move_selected
         global selected_box
-        print("Move mode click")
+        logger.info(f"Move mode click on box {self.box.get_id()}")
         if not utils.globalvars.box_for_move_selected:
             utils.globalvars.box_for_move_selected = True
             selected_box = self.box
             self.disable_descendant_boxes()
-            print("Selected box for moving {}".format(self.box.get_id()))
+            logger.debug("Selected box for moving {}".format(self.box.get_id()))
         else:
             self.box.add_child(selected_box)
             utils.globalvars.box_for_move_selected = False
-            print("Moved box {} to hang from {}".format(
+            logger.debug("Moved box {} to hang from {}".format(
                 selected_box.get_id(), self.box.get_id()))
             self.window().redraw_boxes()
 
     def process_click_default_mode(self):
-        print("Default mode click")
+        logger.info(f"Default mode click on box {self.box.get_id()}")
         self.details.show()
 
     def get_box(self) -> Box:

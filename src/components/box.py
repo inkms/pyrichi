@@ -1,5 +1,8 @@
 # Here go the imports
+import logging
 from components.load import Load
+
+logger = logging.getLogger(__name__)
 
 # Here goes the class
 class Box:
@@ -40,7 +43,7 @@ class Box:
             self.children.remove(child)
             child._set_parent(None)  # Ask Pablo
         except Exception as e:
-            print(f"{child.get_id()} is not a child of this box: {e}")
+            logger.error(f"{child.get_id()} is not a child of this box: {e}")
 
     def _is_ascendant_of(self, wanted_box: "Box"):
         for child in self.get_children():

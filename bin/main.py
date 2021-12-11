@@ -5,7 +5,10 @@ from PyQt5.QtCore import QSize
 from components.box import Box
 from gui.box_gui import BoxGUI
 import utils.globalvars
-import logging
+import logging, coloredlogs
+
+logger = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG')
 
 
 class MainWindow(QMainWindow):
@@ -13,7 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         utils.globalvars.initialize()
-
+        logger.critical("panic in the disco")
         self.setWindowTitle("Pyrichi")
 
         self.entranceGUI = None
@@ -59,41 +62,45 @@ class MainWindow(QMainWindow):
         self.redraw_boxes()
 
     def click_on_add_box(self, selected: bool):
-        logging.info("click on add", selected)
+        logger.debug("click on add {}".format(selected))
         if selected:
-            self.button_delete.setChecked(False)
-            self.button_move.setChecked(False)
-            utils.globalvars.box_for_move_selected = False
-            self.mode = "Add"
-            print(self.mode)
-            self.redraw_boxes()
+            self.change_state("Add")
         else:
-            self.mode = "Default"
-            self.redraw_boxes()
+            self.change_state("Default")
+        logger.info("State changed to {}".format(self.mode))
 
     def click_on_delete_box(self, selected: bool):
-        print("click on delete", selected)
+        logger.debug("click on delete {}".format(selected))
         if selected:
-            self.button_add.setChecked(False)
-            self.button_move.setChecked(False)
-            utils.globalvars.box_for_move_selected = False
-            self.mode = "Delete"
-            self.redraw_boxes()
+            self.change_state("Delete")
         else:
-            self.mode = "Default"
-            self.redraw_boxes()
+            self.change_state("Default")
+        logger.info("State changed to {}".format(self.mode))
 
     def click_on_move_box(self, selected: bool):
-        print("click on move", selected)
+        logger.debug("click on move {}".format(selected))
         if selected:
-            self.button_add.setChecked(False)
-            self.button_delete.setChecked(False)
-            self.mode = "Move"
-            self.redraw_boxes()
+            self.change_state("Move")
         else:
-            self.mode = "Default"
-            self.redraw_boxes()
+            self.change_state("Default")
+        logger.info("State changed to {}".format(self.mode))
+
+    def change_state(self, candidate_state):
+        self.button_add.setChecked(False)
+        self.button_delete.setChecked(False)
+        self.button_move.setChecked(False)
+        self.mode = candidate_state
+        if candidate_state == "Add":
+            self.button_add.setChecked(True)
             utils.globalvars.box_for_move_selected = False
+        elif candidate_state == "Delete":
+            self.button_delete.setChecked(True)
+            utils.globalvars.box_for_move_selected = False
+        elif candidate_state == "Move":
+            self.button_move.setChecked(True)
+        elif candidate_state == "Default":
+            utils.globalvars.box_for_move_selected = False
+        self.redraw_boxes()
 
     def get_mode(self):
         return self.mode
