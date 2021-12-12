@@ -1,11 +1,16 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QToolBar,
-                             QGridLayout, QAction)
+                             QGridLayout, QAction, QComboBox, QLabel)
 from PyQt5.QtCore import QSize
 from components.box import Box
 from gui.box_gui import BoxGUI
+from normatives.empty_normative import Normative
+from normatives.spain import SpainNormative
+from normatives.netherlands import NetherlandsNormative
+from components.mode import Mode
 import utils.globalvars
-import logging, coloredlogs
+import logging
+import coloredlogs
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG')
@@ -16,7 +21,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         utils.globalvars.initialize()
-        logger.critical("panic in the disco")
+        self.normative = Normative()
+
         self.setWindowTitle("Pyrichi")
 
         self.entranceGUI = None
@@ -58,62 +64,89 @@ class MainWindow(QMainWindow):
         self.button_move.setCheckable(True)
         toolbar.addAction(self.button_move)
 
-        self.mode = "Default"
+        toolbar.addSeparator()
+
+        self.normative_selector = QComboBox()
+        self.normative_selector.addItems(["--Select normative--", "Spain", "Netherlands"])
+        self.normative_selector.currentTextChanged.connect(self.change_normative)
+        toolbar.addWidget(QLabel("Normative:"))
+        toolbar.addWidget(self.normative_selector)
+
+        self.mode = Mode.DEFAULT
         self.redraw_boxes()
 
     def click_on_add_box(self, selected: bool):
         logger.debug("click on add {}".format(selected))
         if selected:
-            self.change_state("Add")
+            self.change_mode(Mode.ADD)
         else:
-            self.change_state("Default")
+            self.change_mode(Mode.DEFAULT)
         logger.info("State changed to {}".format(self.mode))
 
     def click_on_delete_box(self, selected: bool):
         logger.debug("click on delete {}".format(selected))
         if selected:
-            self.change_state("Delete")
+            self.change_mode(Mode.DELETE)
         else:
-            self.change_state("Default")
+            self.change_mode(Mode.DEFAULT)
         logger.info("State changed to {}".format(self.mode))
 
     def click_on_move_box(self, selected: bool):
         logger.debug("click on move {}".format(selected))
         if selected:
-            self.change_state("Move")
+            self.change_mode(Mode.MOVE)
         else:
-            self.change_state("Default")
+            self.change_mode(Mode.DEFAULT)
         logger.info("State changed to {}".format(self.mode))
 
-    def change_state(self, candidate_state):
+    def change_mode(self, candidate_state):
         self.button_add.setChecked(False)
         self.button_delete.setChecked(False)
         self.button_move.setChecked(False)
         self.mode = candidate_state
-        if candidate_state == "Add":
+        if candidate_state == Mode.ADD:
             self.button_add.setChecked(True)
             utils.globalvars.box_for_move_selected = False
-        elif candidate_state == "Delete":
+        elif candidate_state == Mode.DELETE:
             self.button_delete.setChecked(True)
             utils.globalvars.box_for_move_selected = False
-        elif candidate_state == "Move":
+        elif candidate_state == Mode.MOVE:
             self.button_move.setChecked(True)
-        elif candidate_state == "Default":
+        elif candidate_state == Mode.DEFAULT:
             utils.globalvars.box_for_move_selected = False
         self.redraw_boxes()
 
     def get_mode(self):
         return self.mode
 
+    def change_normative(self, normative):
+        logger.debug(normative)
+        if normative == "Spain":
+            logger.debug("Normative selected is Spain")
+            self.normative = SpainNormative()
+        elif normative == "Netherlands":
+            self.normative = NetherlandsNormative()
+            logger.debug("Normative selected is Netherlands")
+        else:
+            self.normative = Normative()
+            logger.debug("Normative selected is undefined")
+        logger.info(f"Normative changed to {self.normative.name()}")
+
     def redraw_boxes(self):
+        self.clean()
+        self.entranceGUI = BoxGUI(self.entrance)
+        self.entranceGUI.render_with_children(self.box_layout, 0, 0)
+        if self.mode == Mode.DELETE:
+            self.entranceGUI.setEnabled(False)
+
+    def clean(self):
+        # for child in self.entrance.get_children():
+        #     del child
         while self.box_layout.count():  # Cleanup loop
             child = self.box_layout.takeAt(0)
             if child.widget():
+                # child.widget().setParent(None)
                 child.widget().deleteLater()
-        self.entranceGUI = BoxGUI(self.entrance)
-        self.entranceGUI.render_with_children(self.box_layout, 0, 0)
-        if self.mode == "Delete":
-            self.entranceGUI.setEnabled(False)
 
 
 app = QApplication(sys.argv)

@@ -1,14 +1,18 @@
 # Here go the imports
 import logging
+import sys
+
 from components.load import Load
 
 logger = logging.getLogger(__name__)
+
 
 # Here goes the class
 class Box:
     # Static variables
     counter = 0  # ID counter
-# TODO skeleton for adding thickness calculation and normative in modular way
+
+    # TODO skeleton for adding thickness calculation and normative in modular way
 
     def __init__(self):
         self.loads = []
@@ -17,7 +21,7 @@ class Box:
         self.id = Box.counter
         self.gui = None
         Box.counter += 1
-        # self.waste = list(range(1, 10000000)) # TODO For test only, there is memory leak
+        # self.waste = list(range(1, 10000000))  # TODO For test only, there is memory leak
 
     def _set_parent(self, parent: "Box"):
         self.parent = parent
@@ -95,10 +99,24 @@ class Box:
         for child in self.get_children():
             if not child.defined():
                 return False
+        if len(self.get_loads()) + len(self.get_children()) == 0:  # TODO: Is a useless empty box undefined?
+            return False
         return True
 
+    @property
+    def power(self) -> float:
+        power = 0.0
+        for load in self.get_loads():
+            power += load.power
+        for child in self.get_children():
+            power += child.power
+        return power
+
     def __del__(self):
+        print(sys.getrefcount(self))
         del self.gui
         for child in self.get_children():
             self.delete_child(child)
             del child
+        print(sys.getrefcount(self))
+        del self

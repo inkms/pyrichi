@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QPushButton, QWidget, QLabel, QVBoxLayout, QGridLayout)
 # from PyQt5.QtCore import QSize
 from components.box import Box
+from components.mode import Mode
 import utils.globalvars
 import logging
 
@@ -17,6 +18,8 @@ class BoxGUI(QPushButton):
         super().__init__()
         self.setAutoFillBackground(True)
         self.box = box
+        if box.gui is not None:
+            del box.gui
         box.gui = self
         self.setText(str(box.get_id()))
         self.clicked.connect(self.process_click)
@@ -43,16 +46,19 @@ class BoxGUI(QPushButton):
 
     def process_click(self):
         mode = self.window().get_mode()
-        if mode == "Add":
+        if mode == Mode.ADD:
             self.process_click_add_mode()
             return
-        if mode == "Delete":
+        if mode == Mode.DELETE:
             self.process_click_delete_mode()
             return
-        if mode == "Move":
+        if mode == Mode.MOVE:
             self.process_click_move_mode()
             return
-        self.process_click_default_mode()
+        if mode == Mode.DEFAULT:
+            self.process_click_default_mode()
+            return
+        logger.error("Unknown execution mode")
 
     def process_click_add_mode(self):
         logger.info(f"Add mode click on box {self.box.get_id()}")
@@ -62,8 +68,9 @@ class BoxGUI(QPushButton):
     def process_click_delete_mode(self):
         logger.info(f"Delete mode click on box {self.box.get_id()}")
         self.box.parent.delete_child(self.box)
-        del self.box
+        self.box.__del__()
         self.window().redraw_boxes()
+        del self
 
     def process_click_move_mode(self):
         global selected_box
@@ -82,6 +89,7 @@ class BoxGUI(QPushButton):
 
     def process_click_default_mode(self):
         logger.info(f"Default mode click on box {self.box.get_id()}")
+        logger.debug(self.window().normative.calculate_box(self.box))
         self.details.show()
 
     def get_box(self) -> Box:
