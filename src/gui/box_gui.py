@@ -1,5 +1,4 @@
 from PyQt5.QtWidgets import (QPushButton, QWidget, QLabel, QVBoxLayout, QGridLayout)
-# from PyQt5.QtCore import QSize
 from components.box import Box
 from components.mode import Mode
 import utils.globalvars
@@ -68,9 +67,8 @@ class BoxGUI(QPushButton):
     def process_click_delete_mode(self):
         logger.info(f"Delete mode click on box {self.box.get_id()}")
         self.box.parent.delete_child(self.box)
-        self.box.__del__()
+        self.box.erase()
         self.window().redraw_boxes()
-        del self
 
     def process_click_move_mode(self):
         global selected_box
@@ -90,7 +88,7 @@ class BoxGUI(QPushButton):
     def process_click_default_mode(self):
         logger.info(f"Default mode click on box {self.box.get_id()}")
         logger.debug(self.window().normative.calculate_box(self.box))
-        self.details.show()
+        # self.details.show()
 
     def get_box(self) -> Box:
         return self.box

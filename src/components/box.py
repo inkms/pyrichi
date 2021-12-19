@@ -1,6 +1,5 @@
 # Here go the imports
 import logging
-import sys
 from typing import Union
 from components.load import Load
 
@@ -19,7 +18,6 @@ class Box:
         self.id = Box.counter
         self.gui = None
         Box.counter += 1
-        self.waste = list(range(1, 10000000))  # TODO For test only, there is memory leak
 
     def _set_parent(self, parent: Union["Box", None]):
         self.parent = parent
@@ -111,13 +109,15 @@ class Box:
             power += child.power
         return power
 
-    def __del__(self):
-        print(sys.getrefcount(self))
+    def erase(self):
         print(self.get_id())
-        del self.gui
-        for child in self.get_children():
-            print(child.get_id())
-            self.delete_child(child)
-            del child
-        print(sys.getrefcount(self))
+        logger.debug(f"Now deleting the {len(self.get_children())} children of {self.get_id()}")
+        list_of_children = list(self.get_children())
+        for i in range(len(self.get_children())):
+            self.delete_child(list_of_children[i])
+            list_of_children[i].erase()
+        logger.debug(f"No more children, now {self.get_id()} self deletes")
+        logger.info(f"Deleting box {self.get_id()}")
+        if self.gui is not None:
+            del self.gui
         del self

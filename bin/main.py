@@ -4,9 +4,6 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QToolBar,
 from PyQt5.QtCore import QSize
 from components.box import Box
 from gui.box_gui import BoxGUI
-# from normatives.empty_normative import Normative
-# from normatives.spain import SpainNormative
-# from normatives.netherlands import NetherlandsNormative
 import normatives
 from components.mode import Mode
 import utils.globalvars
@@ -69,7 +66,7 @@ class MainWindow(QMainWindow):
 
         self.normative_selector = QComboBox()
         self.normative_selector.addItems(normatives.names)
-        self.normative_selector.currentTextChanged.connect(self.change_normative)  # TODO change to report index
+        self.normative_selector.currentIndexChanged.connect(self.change_normative)
         toolbar.addWidget(QLabel("Normative:"))
         toolbar.addWidget(self.normative_selector)
 
@@ -120,9 +117,9 @@ class MainWindow(QMainWindow):
     def get_mode(self):
         return self.mode
 
-    def change_normative(self, normative):
-        logger.debug(f"Normative selected is {normative}")
-        self.normative = eval(f"normatives.{normative}")()
+    def change_normative(self, i):
+        logger.debug(f"Normative selected is {normatives.names[i]}")
+        self.normative = eval(f"normatives.{normatives.names[i]}")()
         logger.info(f"Normative changed to {self.normative.name()}")
 
     def redraw_boxes(self):

@@ -9,10 +9,6 @@ __all__ = ["SpainNormative"]
 
 
 class SpainNormative(Normative):
-    #@classmethod
-    #def name(cls):
-    #    return cls.__name__
-
     @classmethod
     def power_to_thickness(cls, power: float):  # TODO calculate properly
         """
