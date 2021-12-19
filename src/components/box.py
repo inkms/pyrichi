@@ -1,7 +1,7 @@
 # Here go the imports
 import logging
 import sys
-
+from typing import Union
 from components.load import Load
 
 logger = logging.getLogger(__name__)
@@ -12,8 +12,6 @@ class Box:
     # Static variables
     counter = 0  # ID counter
 
-    # TODO skeleton for adding thickness calculation and normative in modular way
-
     def __init__(self):
         self.loads = []
         self.children = []
@@ -21,9 +19,9 @@ class Box:
         self.id = Box.counter
         self.gui = None
         Box.counter += 1
-        # self.waste = list(range(1, 10000000))  # TODO For test only, there is memory leak
+        self.waste = list(range(1, 10000000))  # TODO For test only, there is memory leak
 
-    def _set_parent(self, parent: "Box"):
+    def _set_parent(self, parent: Union["Box", None]):
         self.parent = parent
 
     def add_child(self, candidate_child: "Box"):
@@ -45,7 +43,8 @@ class Box:
         """
         try:
             self.children.remove(child)
-            child._set_parent(None)  # Ask Pablo
+            child._set_parent(None)
+            logger.debug(f"Child {child.get_id()} removed from parent {self.get_id()}")
         except Exception as e:
             logger.error(f"{child.get_id()} is not a child of this box: {e}")
 
@@ -114,8 +113,10 @@ class Box:
 
     def __del__(self):
         print(sys.getrefcount(self))
+        print(self.get_id())
         del self.gui
         for child in self.get_children():
+            print(child.get_id())
             self.delete_child(child)
             del child
         print(sys.getrefcount(self))

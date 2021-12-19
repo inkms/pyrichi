@@ -4,9 +4,10 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QToolBar,
 from PyQt5.QtCore import QSize
 from components.box import Box
 from gui.box_gui import BoxGUI
-from normatives.empty_normative import Normative
-from normatives.spain import SpainNormative
-from normatives.netherlands import NetherlandsNormative
+# from normatives.empty_normative import Normative
+# from normatives.spain import SpainNormative
+# from normatives.netherlands import NetherlandsNormative
+import normatives
 from components.mode import Mode
 import utils.globalvars
 import logging
@@ -21,7 +22,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         utils.globalvars.initialize()
-        self.normative = Normative()
+        self.normative = normatives.Normative()
 
         self.setWindowTitle("Pyrichi")
 
@@ -67,8 +68,8 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
 
         self.normative_selector = QComboBox()
-        self.normative_selector.addItems(["--Select normative--", "Spain", "Netherlands"])
-        self.normative_selector.currentTextChanged.connect(self.change_normative)
+        self.normative_selector.addItems(normatives.names)
+        self.normative_selector.currentTextChanged.connect(self.change_normative)  # TODO change to report index
         toolbar.addWidget(QLabel("Normative:"))
         toolbar.addWidget(self.normative_selector)
 
@@ -120,16 +121,8 @@ class MainWindow(QMainWindow):
         return self.mode
 
     def change_normative(self, normative):
-        logger.debug(normative)
-        if normative == "Spain":
-            logger.debug("Normative selected is Spain")
-            self.normative = SpainNormative()
-        elif normative == "Netherlands":
-            self.normative = NetherlandsNormative()
-            logger.debug("Normative selected is Netherlands")
-        else:
-            self.normative = Normative()
-            logger.debug("Normative selected is undefined")
+        logger.debug(f"Normative selected is {normative}")
+        self.normative = eval(f"normatives.{normative}")()
         logger.info(f"Normative changed to {self.normative.name()}")
 
     def redraw_boxes(self):

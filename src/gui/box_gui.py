@@ -23,7 +23,7 @@ class BoxGUI(QPushButton):
         box.gui = self
         self.setText(str(box.get_id()))
         self.clicked.connect(self.process_click)
-        self.details = BoxDetails(self.box, self)
+        # self.details = BoxDetails(self.box)
 
     def render_with_children(self, layout: QGridLayout,
                              row_initial: int,
@@ -98,11 +98,10 @@ class BoxGUI(QPushButton):
 
 class BoxDetails(QWidget):
 
-    def __init__(self, box: Box, gui: BoxGUI):
+    def __init__(self, box: Box):
         super().__init__()
         layout = QVBoxLayout()
         self.label = QLabel("Another Window")
         layout.addWidget(self.label)
         self.setLayout(layout)
         self.box = box
-        self.gui = gui
